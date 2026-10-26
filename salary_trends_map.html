@@ -29,7 +29,7 @@
 <style>
   :root { --brand: #732cec; --bg: #f2f0f0; --ink: #1a1a1a; --muted: #555252; --rule: #e3e0e0; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); }
+  html, body { margin: 0; padding: 0; background: var(--bg); overflow: hidden; }
   body { font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); }
   .eca { max-width: 900px; margin: 0 auto; padding: 24px 20px 28px; }
   h1 { font-size: clamp(18px, 3.2vw, 24px); font-weight: 700; text-align: center; margin: 0; }
@@ -37,7 +37,8 @@
   svg { display: block; width: 100%; height: auto; }
   .rg { fill: var(--brand); stroke: var(--brand); stroke-width: .6; stroke-linejoin: round; cursor: pointer; transition: opacity .2s ease; outline: none; }
   .rg.dim { opacity: .2; }
-  .rg:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
+  .rg:focus { outline: none; }
+  body.kbd .rg:focus { stroke: var(--ink); stroke-width: 1.5; }
   .box { margin: 16px auto 0; width: fit-content; min-width: 260px; background: #fff; border-radius: 10px; padding: 12px 26px 14px; }
   .box p { font-size: 16px; font-weight: 700; text-align: center; margin: 0 0 4px; }
   .nums { display: grid; grid-template-columns: 1fr 1fr; }
@@ -108,10 +109,12 @@
     p.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { hov = r; paint(); } });
     p.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { hov = null; paint(); } });
   });
+  document.addEventListener("keydown", function (e) { if (e.key === "Tab") document.body.classList.add("kbd"); });
+  document.addEventListener("pointerdown", function () { document.body.classList.remove("kbd"); });
   document.getElementById("sea").addEventListener("click", function () { show("Global"); });
 
   function reportHeight() {
-    window.parent.postMessage(document.documentElement.scrollHeight, "*");
+    window.parent.postMessage(Math.ceil(document.querySelector(".eca").getBoundingClientRect().height), "*");
   }
   window.addEventListener("load", reportHeight);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reportHeight);
